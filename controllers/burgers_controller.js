@@ -4,56 +4,34 @@ const router = express.Router();
 
 
 router.get("/", function (req, res) {
-    burger.selectAll(function (data) {
-        var hbsObject = {
-            burger: data
-        };
-        console.log(hbsObject);
-        res.render("index", hbsObject);
+    res.redirect("/burgers");
+});
+
+router.get("/burgers", function (req, res) {
+    // express callback response by calling burger.selectAllBurger
+    burger.selectAll(function (burgerData) {
+        // wrapper for orm.js that using MySQL query callback will return burger_data, render to index with handlebar
+        res.render("index", { burger_data: burgerData });
     });
 });
 
-router.get("/api/burger", function (req, res) {
-    burger.selectAll(function (data) {
-        res.json({
-            burger: data
-        });
+router.post("/burgers/create", function (req, res) {
+    // takes the request object using it as input for burger.addBurger
+    burger.createOne(req.body.burger_name, function (result) {
+        // wrapper for orm.js that using MySQL insert callback will return a log to console,
+        // render back to index with handle
+        console.log(result);
+        res.redirect("/");
     });
 });
 
-router.get("/api/burger/:id", function (req, res) {
-    burger.selectAll(function (data) {
-        res.json({
-            burger: data[req.params.id - 1]
-        });
-    });
-});
-
-router.post("/api/burger", function (req, res) {
-    console.log(req.body.name + " " + req.body.devoured)
-    burger.createOne([
-        "burger_name", " devoured"
-    ], [
-            req.body.name, req.body.devoured
-        ], function (result) {
-            console.log(req.body.name + req.body.devoured)
-            res.json({ id: result.insertId });
-        });
-});
-
-router.put("/api/burger/:id", function (req, res) {
-    var condition = "id = " + req.params.id;
-
-    console.log("condition", condition);
-
-    burger.updateOne({
-        devoured: req.body.devoured
-    }, condition, function (result) {
-        if (result.changedRows == 0) {
-            return res.status(404).end();
-        } else {
-            res.status(200).end();
-        }
+router.put("/burgers/:id", function (req, res) {
+    burger.updateOne(req.params.id, function (result) {
+        // wrapper for orm.js that using MySQL update callback will return a log to console,
+        // render back to index with handle
+        console.log(result);
+        // Send back response and let page reload from .then in Ajax
+        res.sendStatus(200);
     });
 });
 

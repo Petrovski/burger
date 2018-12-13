@@ -1,8 +1,27 @@
 body {
     font-family: Cabin;
+    background: ivory;
+}
+
+img {
+    margin-top: 20px;
+}
+
+p {
+    font-size: 25px;
+}
+
+hr {
+    margin: 50px;
 }
 
 .container {
     text-align: center;
     margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    text-align: center;
+    font-size: 50px;
 }
